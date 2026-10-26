@@ -12,8 +12,8 @@ import numpy as np
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 # Check the versions
-print(np.__version__)  # 2.5.4
-print(pl.__version__)  # 2.0.0
+print("Version of numpy:", np.__version__)  # 2.5.4
+print("Version of polars:", pl.__version__)  # 2.0.0
 
 
 def part_std_periodic(ser: pl.Series) -> float:
@@ -28,23 +28,15 @@ def part_std_periodic(ser: pl.Series) -> float:
     return ratio_seasonal
 
 
+def load_data(code_country: str) -> pl.DataFrame:
+    filename = f"./dat/{code_country}_2010_2025.csv"
+    return pl.read_csv(filename)
+
+
 # Load the data
-df = pl.read_csv("./dat/FR_2010_2025.csv")
+df = load_data("FR")
 
-dec = seasonal_decompose(df["Python"], model="additive", period=12)
+lang = "Python"
 
-std_seasonality = float(np.std(dec.seasonal))
-# Casting with 'float' is used
-# for seasonal_decompose does not declare its output type.
-
-print(f"SD of the seasonality component: {std_seasonality:.2f}")  # FR -> 4.96
-
-std_orig = np.std(df["Python"].to_numpy())
-print(f"Standard deviation of the original signal: {std_orig:.2f}")
-# FR -> 22.38
-
-ratio = std_seasonality / std_orig
-print(f"Part of the seasonality component: {ratio:.2f}")  # FR -> 0.22
-
-print(f"Part using function: {part_std_periodic(df["Python"]):.2f}")
+print(f"Part of seasonality in Py searches: {part_std_periodic(df[lang]):.2f}")
 # FR -> 0.22
