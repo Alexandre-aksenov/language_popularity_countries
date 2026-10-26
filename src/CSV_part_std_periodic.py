@@ -4,6 +4,7 @@ Compute the standard deviation of the periodic component
 / that of the time series.
 
 Version 1. The data for France.
+Version 2. The data for any country in the data.
 """
 
 import polars as pl
@@ -33,10 +34,32 @@ def load_data(code_country: str) -> pl.DataFrame:
     return pl.read_csv(filename)
 
 
-# Load the data
-df = load_data("FR")
+def main():
+    import sys
 
-lang = "Python"
+    code_country = "FR"  # default: the country where the author lives
+    if len(sys.argv) == 2:
+        _, code_country = sys.argv  # replace it by the user's input
+
+        # Type check (can it actually fail on sys.argv ?)
+        if not isinstance(code_country, str):
+            raise ValueError("Country code must be a string.")
+
+    # Load the data
+    df = load_data(code_country)
+
+    lang = "Python"
+    ratio = part_std_periodic(df[lang])
+    print(f"Part of seasonality in Py searches: {ratio:.2f}")
+
+
+"""
 
 print(f"Part of seasonality in Py searches: {part_std_periodic(df[lang]):.2f}")
 # FR -> 0.22
+# DE -> 0.11
+# IT -> 0.17
+"""
+
+if __name__ == "__main__":
+    main()
