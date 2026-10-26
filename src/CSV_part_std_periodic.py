@@ -16,7 +16,7 @@ print(np.__version__)  # 2.5.4
 print(pl.__version__)  # 2.0.0
 
 
-def part_std_periodic(ser) -> float:
+def part_std_periodic(ser: pl.Series) -> float:
     std_original = np.std(ser.to_numpy())
     decomposed = seasonal_decompose(ser, model="additive", period=12)
 
@@ -47,3 +47,4 @@ ratio = std_seasonality / std_orig
 print(f"Part of the seasonality component: {ratio:.2f}")  # FR -> 0.22
 
 print(f"Part using function: {part_std_periodic(df["Python"]):.2f}")
+# FR -> 0.22
