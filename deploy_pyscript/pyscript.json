@@ -3,6 +3,7 @@
         "numpy",
         "polars",
         "statsmodels",
+        "pyodide-http",
         "requests"
     ]
 }

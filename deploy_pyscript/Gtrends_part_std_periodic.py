@@ -26,6 +26,11 @@ def fetch_google_trends_csv(
     time_range: str = "2010-01-01 2025-12-31",  # e.g., "all", "today 5-y", "today 12-m"
     hl: str = "en-US",
 ) -> str:
+    # Before doing anything, patch requests,
+    # see: https://pyscript.com/@6fd75ce3-df0a-4384-b255-195e41c4f02f/requests-demo/latest
+    import pyodide_http
+    pyodide_http.patch_all()
+
     import json
     import urllib.parse
     import requests
@@ -44,6 +49,7 @@ def fetch_google_trends_csv(
 
     # 1. Warm up session / cookies
     session.get("https://trends.google.com/?geo=" + geo)
+    # pyodide.ffi.JsException: NetworkError: A network error occurred.
 
     # 2. Query the explore endpoint to get widget tokens
     req_payload = {
