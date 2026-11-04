@@ -6,8 +6,8 @@ Compute the standard deviation of the periodic component
 Version 1. Runs on the local machine.
 """
 
-import polars as pl
-import numpy as np
+# import polars as pl
+# import numpy as np
 
 from functions.part_std_periodic import part_std_periodic
 from functions.fetch_google_trends_2010_2025 import fetch_google_trends_polars
