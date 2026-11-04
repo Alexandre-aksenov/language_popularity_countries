@@ -3,7 +3,8 @@ Extract the Time Series for "Python" from Google Trends data.
 Compute the standard deviation of the periodic component
 / that of the time series.
 
-Version 1. Runs on the local machine.
+Version 1. Runs on the local machine in Command Line.
+Version 2. Runs as a local Streamlit server.
 """
 
 # import polars as pl
@@ -12,31 +13,33 @@ Version 1. Runs on the local machine.
 from functions.part_std_periodic import part_std_periodic
 from functions.fetch_google_trends_2010_2025 import fetch_google_trends_polars
 
+import streamlit as st
 
-def main():
-    import sys
 
-    code_country = "FR"  # default: the country where the author lives
-    if len(sys.argv) == 2:
-        _, code_country = sys.argv  # replace it by the user's input
+st.set_page_config(
+    page_title="Medical Image Data Exploration",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
-        # Type check (can it actually fail on sys.argv ?)
-        if not isinstance(code_country, str):
-            raise ValueError("Country code must be a string.")
+code_country = st.text_input("Code of a country", "FR", max_chars=2)
 
+if code_country and len(code_country) == 2:
     # Load the data
     df = fetch_google_trends_polars(geo=code_country)
 
-    lang = "search_interest"
-    ratio = part_std_periodic(df[lang])
-    print(f"Part of seasonality in Py searches: {ratio:.2f}")
+    data_column = "search_interest"
+    ratio = part_std_periodic(df[data_column])
+    st.write(f"Part of seasonality in Py searches for {code_country}: {ratio:.2f}")
+else:
+    st.write("Please enter a valid country code.")
 
+# if __name__ == "__main__":
+#     main()
 
-if __name__ == "__main__":
-    main()
-
-"""
-Some results.
+st.markdown("""
+-----
+Some previous results.
 
 High seasonality, which may be qualified as a separate group
 FR -> 0.23
@@ -44,7 +47,7 @@ BE -> 0.24
 CZ -> 0.29 (outlayer)
 
 Low seasonality:
-DE -> 0.12 (outlayer)
+DE -> 0.10 (outlayer)
 
 Most common values:
 PL -> 0.16
@@ -55,4 +58,4 @@ US -> 0.18
 GB -> 0.20
 CA -> 0.20
 ES -> 0.20
-"""
+""")
