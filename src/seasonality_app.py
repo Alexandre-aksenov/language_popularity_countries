@@ -19,6 +19,7 @@ import json
 
 # For plotting the data
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 
 st.set_page_config(
@@ -49,10 +50,19 @@ if code_country and len(code_country) == 2:
                 # Plot
                 fig, ax = plt.subplots(figsize=(12, 5))
                 ax.plot(df["date"], df["search_interest"], label="Python")
+
+                ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=9))
+
+                # Format the tick labels, e.g. "Sep 2020" or "2020-09"
+                ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
+
+                # Rotate and align date tick labels nicely
+                fig.autofmt_xdate(rotation=45)
+
                 ax.set_xlabel("Time")
-                ax.set_ylabel("Search interest")
-                ax.set_title(f"Search interest for Python in {country_name}")
-                ax.legend()
+                ax.set_ylabel("Popularity")
+                ax.grid(True, linestyle="--", alpha=0.5)
+
                 st.pyplot(fig)
 
             else:
