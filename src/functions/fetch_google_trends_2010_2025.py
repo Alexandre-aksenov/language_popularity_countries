@@ -8,6 +8,27 @@ import polars as pl
 import requests
 
 
+def gtrends_url(keyword: str = "/m/05z1_",
+                geo: str = "FR",
+                time_range: str = "2010-01-01 2025-12-31",
+                hl: str = "en-US") -> str:
+    # 2. Query the explore endpoint to get widget tokens
+    req_payload = {
+        "comparisonItem": [{"keyword": keyword, "geo": geo, "time": time_range}],
+        "category": 0,
+        "property": "",
+    }
+
+    explore_params = {
+        "hl": hl,
+        "req": json.dumps(req_payload),
+        "tz": "-60",
+    }
+
+    explore_url = f"https://trends.google.com/trends/api/explore?{urllib.parse.urlencode(explore_params)}"
+    return explore_url
+
+
 def fetch_google_trends_csv(
     keyword: str = "/m/05z1_",
     # Google Knowledge Graph entity for Python (Programming Language)
@@ -30,20 +51,8 @@ def fetch_google_trends_csv(
     # 1. Warm up session / cookies
     session.get("https://trends.google.com/?geo=" + geo)
 
-    # 2. Query the explore endpoint to get widget tokens
-    req_payload = {
-        "comparisonItem": [{"keyword": keyword, "geo": geo, "time": time_range}],
-        "category": 0,
-        "property": "",
-    }
+    explore_url = gtrends_url(keyword, geo, time_range, hl)
 
-    explore_params = {
-        "hl": hl,
-        "req": json.dumps(req_payload),
-        "tz": "-60",
-    }
-
-    explore_url = f"https://trends.google.com/trends/api/explore?{urllib.parse.urlencode(explore_params)}"
     response = session.get(explore_url)
     response.raise_for_status()
 
@@ -133,3 +142,14 @@ def fetch_google_trends_polars(
     )
     df = load_trends_to_polars(csv_content)
     return df
+
+
+if __name__ == "__main__":
+    csv_content = fetch_google_trends_csv(
+        keyword="/m/05z1_",
+        geo="FR",
+        # time_range="all"
+        time_range="2010-01-01 2025-12-31"
+    )
+    df = load_trends_to_polars(csv_content)
+    print(df)
