@@ -12,12 +12,13 @@ Version 2. Runs as a local Streamlit server.
 
 from functions.part_std_periodic import part_std_periodic
 from functions.fetch_google_trends_2010_2025 import fetch_google_trends_polars
+from functions.code_opt_country_name import code2opt_name
 
 import streamlit as st
 
 
 st.set_page_config(
-    page_title="Medical Image Data Exploration",
+    page_title="Seasonal trend in Python searches per country",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -25,12 +26,18 @@ st.set_page_config(
 code_country = st.text_input("Code of a country", "FR", max_chars=2)
 
 if code_country and len(code_country) == 2:
-    # Load the data
-    df = fetch_google_trends_polars(geo=code_country)
+    # Try to extract the name
+    country_name = code2opt_name(code_country)
 
-    data_column = "search_interest"
-    ratio = part_std_periodic(df[data_column])
-    st.write(f"Part of seasonality in Py searches for {code_country}: {ratio:.2f}")
+    if country_name:
+        # Load the data
+        df = fetch_google_trends_polars(geo=code_country)
+
+        data_column = "search_interest"
+        ratio = part_std_periodic(df[data_column])
+        st.write(f"Part of seasonality in Py searches for {code_country}: {ratio:.2f}")
+    else:
+        st.write("This country has not been found.")
 else:
     st.write("Please enter a valid country code.")
 
