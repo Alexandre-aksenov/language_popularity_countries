@@ -108,16 +108,16 @@ High seasonality:
 | Country | Ratio |
 |---------|-------|
 | FR      | 0.23  |
-| BE      | 0.24  |
+| BE      | 0.25  |
 | CZ      | 0.29  |
 
 Low seasonality:
 
 | Country | Ratio |
 |---------|-------|
-| DE      | 0.10  |
+| DE      | 0.11  |
 
-Most values are between 0.15 and 0.20:
+Most values are located between 0.15 and 0.20:
 
 | Country | Ratio |
 |---------|-------|
@@ -126,7 +126,7 @@ Most values are between 0.15 and 0.20:
 | NL      | 0.17  |
 | IT      | 0.18  |
 | US      | 0.18  |
+| CA      | 0.19  |
 | GB      | 0.20  |
-| CA      | 0.20  |
 | ES      | 0.20  |
 """)
