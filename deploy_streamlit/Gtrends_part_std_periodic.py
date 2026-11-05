@@ -26,6 +26,9 @@ st.set_page_config(
 code_country = st.text_input("Code of a country", "FR", max_chars=2)
 
 if code_country and len(code_country) == 2:
+    # switch to uppercase
+    code_country = code_country.upper()
+
     # Try to extract the name
     country_name = code2opt_name(code_country)
 
@@ -35,7 +38,7 @@ if code_country and len(code_country) == 2:
 
         data_column = "search_interest"
         ratio = part_std_periodic(df[data_column])
-        st.write(f"Part of seasonality in Py searches for {code_country}: {ratio:.2f}")
+        st.write(f"Part of seasonality in Py searches for {country_name}: {ratio:.2f}")
     else:
         st.write("This country has not been found.")
 else:
