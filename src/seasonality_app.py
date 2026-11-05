@@ -56,23 +56,32 @@ else:
 
 st.markdown("""
 -----
-Some previous results.
+Some results in Western Europe and North America.
 
-High seasonality, which may be qualified as a separate group
-FR -> 0.23
-BE -> 0.24
-CZ -> 0.29 (outlayer)
+High seasonality:
+
+| Country | Ratio |
+|---------|-------|
+| FR      | 0.23  |
+| BE      | 0.24  |
+| CZ      | 0.29  |
 
 Low seasonality:
-DE -> 0.10 (outlayer)
 
-Most common values:
-PL -> 0.16
-CH -> 0.17
-NL -> 0.17
-IT -> 0.18
-US -> 0.18
-GB -> 0.20
-CA -> 0.20
-ES -> 0.20
+| Country | Ratio |
+|---------|-------|
+| DE      | 0.10  |
+
+Most values are between 0.15 and 0.20:
+
+| Country | Ratio |
+|---------|-------|
+| PL      | 0.16  |
+| CH      | 0.17  |
+| NL      | 0.17  |
+| IT      | 0.18  |
+| US      | 0.18  |
+| GB      | 0.20  |
+| CA      | 0.20  |
+| ES      | 0.20  |
 """)
