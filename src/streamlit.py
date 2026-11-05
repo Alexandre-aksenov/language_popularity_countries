@@ -15,6 +15,7 @@ from functions.fetch_google_trends_2010_2025 import fetch_google_trends_polars
 from functions.code_opt_country_name import code2opt_name
 
 import streamlit as st
+import json
 
 
 st.set_page_config(
@@ -34,11 +35,17 @@ if code_country and len(code_country) == 2:
 
     if country_name:
         # Load the data
-        df = fetch_google_trends_polars(geo=code_country)
+        try:
+            df = fetch_google_trends_polars(geo=code_country)
 
-        data_column = "search_interest"
-        ratio = part_std_periodic(df[data_column])
-        st.write(f"Part of seasonality in Py searches for {country_name}: {ratio:.2f}")
+            if df is not None:
+                data_column = "search_interest"
+                ratio = part_std_periodic(df[data_column])
+                st.write(f"Part of seasonality in Py searches for {country_name}: {ratio:.2f}")
+            else:
+                st.write("Could not connect to Google Trends. Please, try again later.")
+        except json.decoder.JSONDecodeError:  # can occur at 'fetch_google_trends_polars'
+            st.write("Could not decode the reply of Google Trends. Please, file an issue to the author.")
     else:
         st.write("This country has not been found.")
 else:
