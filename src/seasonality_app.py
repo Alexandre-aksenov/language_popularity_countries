@@ -17,6 +17,9 @@ from functions.code_opt_country_name import code2opt_name
 import streamlit as st
 import json
 
+# For plotting the data
+import matplotlib.pyplot as plt
+
 
 st.set_page_config(
     page_title="Seasonal trend in Python searches per country",
@@ -42,6 +45,16 @@ if code_country and len(code_country) == 2:
                 data_column = "search_interest"
                 ratio = part_std_periodic(df[data_column])
                 st.write(f"Part of seasonality in Py searches for {country_name}: {ratio:.2f}")
+
+                # Plot
+                fig, ax = plt.subplots(figsize=(12, 5))
+                ax.plot(df["date"], df["search_interest"], label="Python")
+                ax.set_xlabel("Time")
+                ax.set_ylabel("Search interest")
+                ax.set_title(f"Search interest for Python in {country_name}")
+                ax.legend()
+                st.pyplot(fig)
+
             else:
                 st.write("Could not connect to Google Trends. Please, try again later.")
         except json.decoder.JSONDecodeError:  # can occur at 'fetch_google_trends_polars'
