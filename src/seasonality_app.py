@@ -28,6 +28,28 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+st.markdown("""
+* Data.
+
+This app shows the seasonal trend in Python searches per country.
+It is based on Google Trends data from 2010 to 2025,
+therefore the data can reflect IT activity only in the countries, where Google
+is the predominant search engine.
+
+* Part of seasonality.
+    * It is estimated on basis of the seasonal decomposition of the time series.
+    * The ratio of the standard deviation of the seasonal component 
+    to the total standard deviation of the time series is computed and shown.
+
+How to use the app:
+* Enter the 2-letter code of a country in the text input field.
+* The app will show the part of seasonality in Python searches for the country.
+* It also plots the number of searches per month normalized to the maximum,
+shown as 100.
+    * The ticks on X-axis show September of each year,
+to make start of the school-year visible. 
+""")
+
 code_country = st.text_input("Code of a country", "FR", max_chars=2)
 
 if code_country and len(code_country) == 2:
