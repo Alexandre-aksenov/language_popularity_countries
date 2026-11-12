@@ -3,6 +3,20 @@
 
 use polars::prelude::*;
 
-fn main() {
+fn main() -> PolarsResult<()> {
     println!("Hello from polars-rs!");
+
+    // Path relative to the Cargo.toml / workspace root directory
+    let file_path = "../dat/FR_2010_2025.csv"; // &str
+
+    // Read the CSV file into a Polars DataFrame
+    let df = CsvReadOptions::default()
+        .with_has_header(true) // CsvReadOptions
+        .try_into_reader_with_file_path(Some(file_path.into()))? // CsvReader<File>
+        .finish()?; // DataFrame
+
+    // Print the DataFrame to the screen
+    println!("{:?}", df);
+
+    Ok(())
 }
