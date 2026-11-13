@@ -3,4 +3,5 @@ __pycache__/
 */target
 
 # for IDE of JetBrains
-/.idea
+.idea/
+*/.idea
