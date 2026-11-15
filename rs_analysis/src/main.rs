@@ -17,13 +17,13 @@ fn main() -> PolarsResult<()> {
 
     // Extract the column for "Python",
     // see: https://docs.rs/polars/latest/polars/prelude/struct.DataFrame.html#method.column
-    let col_py = df.column("Python")?;
+    // let col_py = df.column("Python")?;
 
     // Print the column to the screen
     println!("{:?}", df);
 
-    println!("Column for Python:");
-    println!("{:?}", col_py);
+    // println!("Column for Python:");
+    // println!("{:?}", col_py);
     
     // Extract a new DF
     // let df_py = df.select(["Python"])?;
@@ -42,6 +42,23 @@ fn main() -> PolarsResult<()> {
     // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : str, i64
     
     // Convert the type of column "Time" from "str" to Chrono.
+    // Suggested by Gemini
+    let df_time_py = df_time_py
+        .lazy()
+        .with_columns([
+            col("Time")
+                .str()
+                .to_date(StrptimeOptions { // https://docs.rs/crate/polars-plan/0.55.2#method.to_date
+                    format: Some("%Y-%m-%d".into()),
+                    ..Default::default()
+                })
+        ])// LazyFrame
+        .collect()?;
+    
+    // Print the DataFrame to the screen
+    println!("DataFrame for Python with dates:");
+    println!("{:?}", df_time_py);
+    // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : date, i64
     
     Ok(())
 }
