@@ -1,7 +1,8 @@
 // Load the CSV file for France into Polars
-// Proposition by Gemini
 
-use polars::prelude::*;
+// use polars::prelude::*;
+//-> {to enable passing the data to a plot}
+use plotlars::polars::prelude::*;
 
 // see: https://docs.rs/plotlars/latest/plotlars/struct.TimeSeriesPlot.html
 use plotlars::{Axis, Legend, Line, Plot, Rgb, Shape, Text, TimeSeriesPlot};
@@ -26,7 +27,7 @@ fn main() -> PolarsResult<()> {
     // let col_py = df.column("Python")?;
 
     // Print the column to the screen
-    println!("{:?}", df);
+    // println!("{:?}", df);
 
     // println!("Column for Python:");
     // println!("{:?}", col_py);
@@ -65,6 +66,14 @@ fn main() -> PolarsResult<()> {
     println!("DataFrame for Python with dates:");
     println!("{:?}", df_time_py);
     // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : date, i64
-    
+
+    // Plot the data
+    TimeSeriesPlot::builder()
+        .data(&df_time_py) // TOFIX typing
+        .x("Time")
+        .y("Python")
+        .build()
+        .plot();
+
     Ok(())
 }
