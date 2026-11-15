@@ -3,6 +3,12 @@
 
 use polars::prelude::*;
 
+// see: https://docs.rs/plotlars/latest/plotlars/struct.TimeSeriesPlot.html
+use plotlars::{Axis, Legend, Line, Plot, Rgb, Shape, Text, TimeSeriesPlot};
+// Unresolved imports (although declared in the example)
+//  plotlars::Plot
+//  plotlars::TimeSeriesPlot
+
 fn main() -> PolarsResult<()> {
     // println!("Hello from polars-rs!");
 
