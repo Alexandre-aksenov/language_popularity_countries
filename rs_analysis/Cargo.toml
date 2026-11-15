@@ -5,4 +5,4 @@ edition = "2024"
 
 [dependencies]
 polars = { version = "0.55.2", features = ["csv", "lazy", "dtype-date", "strings"] }
-plotlars = "0.12.6"
+plotlars = { version = "0.12.6", features = ["plotters"] }
