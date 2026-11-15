@@ -33,13 +33,15 @@ fn main() -> PolarsResult<()> {
     // println!("{:?}", df_py);
     // -> shape: (194, 1) , one column "Python" of dtype : i64
 
-    // Extract the column with indices : next step
+    // Extract the column with indices
     let df_time_py = df.select(["Time", "Python"])?;
 
     // Print the DataFrame to the screen
     println!("DataFrame for Python with timestamps:");
     println!("{:?}", df_time_py);
     // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : str, i64
+    
+    // Convert the type of column "Time" from "str" to Chrono.
     
     Ok(())
 }
