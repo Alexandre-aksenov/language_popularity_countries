@@ -12,8 +12,8 @@ use plotlars::{Axis, Legend, Line, Plot, Rgb, Shape, Text, TimeSeriesPlot};
 
 // for STL decomposition
 use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
-use scirs2_core::ndarray::array; // declared as `scirs2-core`
-
+// use scirs2_core::ndarray::array; // declared as `scirs2-core`
+use scirs2_core::ndarray::Array1;
 
 fn main() -> PolarsResult<()> {
     // println!("Hello from polars-rs!");
@@ -84,8 +84,30 @@ fn main() -> PolarsResult<()> {
     // Next step: STL decomposition of the col "Python". See:
     // https://docs.rs/scirs2-series/latest/scirs2_series/
     // https://stackoverflow.com/a/74332649
+    /*
     let array_py = df_time_py.select(["Python"])?
         .to_ndarray::<Float64Type>().unwrap();
+    */
+    // ->
+    // No method named `to_ndarray` found for struct `DataFrame`
+    
+    // Approach suggested by Gemini
+    // 1. Cast the "Python" column from i64 to f64
+    let py_series = df_time_py
+        .column("Python")?
+        .cast(&DataType::Float64)?;
 
+    // 2. Collect into a Vec<f64> (handling potential nulls if any exist)
+    let py_vec: Vec<f64> = py_series
+        .f64()?
+        .into_no_null_iter()
+        .collect();
+
+    // 3. Convert to scirs2_core's Array1<f64>
+    let array_py: Array1<f64> = Array1::from_vec(py_vec);
+    
+    // Check the extracted data array
+    println!("Data as an array: {:?}", array_py);
+    
     Ok(())
 }

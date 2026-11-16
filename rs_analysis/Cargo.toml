@@ -11,6 +11,3 @@ plotlars = { version = "0.12.6", features = ["plotters"] }
 # For Time-Series Decomposition
 scirs2-series = "0.6.5"
 scirs2-core = "0.6.5"
-
-# Testing conversion:
-polars = { version = "0.55.2", features = ["ndarray"]}
