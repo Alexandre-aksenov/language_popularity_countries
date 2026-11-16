@@ -6,9 +6,14 @@ use plotlars::polars::prelude::*;
 
 // see: https://docs.rs/plotlars/latest/plotlars/struct.TimeSeriesPlot.html
 use plotlars::{Axis, Legend, Line, Plot, Rgb, Shape, Text, TimeSeriesPlot};
-// Unresolved imports before backed was added to Cargo.toml (although declared in the example)
+//  These imports were unresolved before backend was added to Cargo.toml
 //  plotlars::Plot
 //  plotlars::TimeSeriesPlot
+
+// for STL decomposition
+use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
+use scirs2_core::ndarray::array; // declared as `scirs2-core`
+
 
 fn main() -> PolarsResult<()> {
     // println!("Hello from polars-rs!");
@@ -67,13 +72,17 @@ fn main() -> PolarsResult<()> {
     println!("{:?}", df_time_py);
     // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : date, i64
 
-    // Plot the data
+    // Plot the data.
+    // This minimal plot can be made "prettier" by adding ticks and vertical lines at September
     TimeSeriesPlot::builder()
-        .data(&df_time_py) // TOFIX typing
+        .data(&df_time_py) 
         .x("Time")
         .y("Python")
         .build()
         .plot();
+    
+    // Next step: STL decomposition. See:
+    // https://docs.rs/scirs2-series/latest/scirs2_series/
 
     Ok(())
 }
