@@ -81,8 +81,11 @@ fn main() -> PolarsResult<()> {
         .build()
         .plot();
     
-    // Next step: STL decomposition. See:
+    // Next step: STL decomposition of the col "Python". See:
     // https://docs.rs/scirs2-series/latest/scirs2_series/
+    // https://stackoverflow.com/a/74332649
+    let array_py = df_time_py.select(["Python"])?
+        .to_ndarray::<Float64Type>().unwrap();
 
     Ok(())
 }
