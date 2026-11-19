@@ -15,6 +15,9 @@ use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
 // use scirs2_core::ndarray::array; // declared as `scirs2-core`
 use scirs2_core::ndarray::Array1;
 
+// for numeric output: SD
+use std_dev::standard_deviation;
+
 fn main() -> PolarsResult<()> {
     // println!("Hello from polars-rs!");
 
@@ -108,11 +111,15 @@ fn main() -> PolarsResult<()> {
     
     // Check the extracted data array
     println!("Data as an array: {:?}", array_py);
-    
+
     // STL decomposition
     let options = STLOptions::default(); // STLOptions
     let result = stl_decomposition(&array_py, 12, &options)
         .expect("should succeed"); // DecompositionResult<f64>
+    // result.seasonal : ArrayBase<_,Dim<[usize;1]>, f64>
+
+    // let std_seasonal = standard_deviation(&result.seasonal);
+    // requires conversion to type: &[_]
     
     Ok(())
 }
