@@ -109,5 +109,10 @@ fn main() -> PolarsResult<()> {
     // Check the extracted data array
     println!("Data as an array: {:?}", array_py);
     
+    // STL decomposition
+    let options = STLOptions::default(); // STLOptions
+    let result = stl_decomposition(&array_py, 12, &options)
+        .expect("should succeed"); // DecompositionResult<f64>
+    
     Ok(())
 }
