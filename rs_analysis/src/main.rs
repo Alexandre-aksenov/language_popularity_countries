@@ -118,8 +118,17 @@ fn main() -> PolarsResult<()> {
         .expect("should succeed"); // DecompositionResult<f64>
     // result.seasonal : ArrayBase<_,Dim<[usize;1]>, f64>
 
-    // let std_seasonal = standard_deviation(&result.seasonal);
-    // requires conversion to type: &[_]
+    let seasonal = result.seasonal.as_slice()// Option<&[f64]>
+        .expect("seasonal array must be contiguous"); // &[f64]
+    
+    println!("---");
+    println!("Seasonal: {:?}", seasonal);
+
+    let std_seasonal = standard_deviation(seasonal);
+    // StandardDeviationOutput<f64>
+
+    println!("---");
+    println!("Its SD (computed by the library): {:?}", std_seasonal);
     
     Ok(())
 }
