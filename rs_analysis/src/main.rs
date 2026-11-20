@@ -121,6 +121,7 @@ fn main() -> PolarsResult<()> {
         .expect("Expected a contiguous array");
     println!("---");
     println!("SD (computed by the library) of full data: {:?}", std_full);
+    println!("SD: {}", std_full.standard_deviation); // 22.4
 
     // STL decomposition
     let options = STLOptions::default(); // STLOptions
@@ -139,6 +140,9 @@ fn main() -> PolarsResult<()> {
 
     println!("---");
     println!("Its SD (computed by the library): {:?}", std_seasonal);
+    println!("SD: {}", std_seasonal.standard_deviation); // 6.05
+    println!("Ratio: {}", std_seasonal.standard_deviation / std_full.standard_deviation);
+    // 0.2697
     
     Ok(())
 }
