@@ -16,7 +16,8 @@ use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
 use scirs2_core::ndarray::Array1;
 
 // for numeric output: SD
-use std_dev::standard_deviation;
+use std_dev::{standard_deviation, StandardDeviationOutput};
+// use log::error;
 
 fn main() -> PolarsResult<()> {
     // println!("Hello from polars-rs!");
@@ -112,6 +113,15 @@ fn main() -> PolarsResult<()> {
     // Check the extracted data array
     println!("Data as an array: {:?}", array_py);
 
+    // Compute mean && SD of the original data.
+    let ref_array_as_slice = &array_py.as_slice();
+    // borrowing is used here to ensure 'array_py' can be reused later.
+
+    let std_full = result_std(ref_array_as_slice)
+        .expect("Expected a contiguous array");
+    println!("---");
+    println!("SD (computed by the library) of full data: {:?}", std_full);
+
     // STL decomposition
     let options = STLOptions::default(); // STLOptions
     let result = stl_decomposition(&array_py, 12, &options)
@@ -120,7 +130,7 @@ fn main() -> PolarsResult<()> {
 
     let seasonal = result.seasonal.as_slice()// Option<&[f64]>
         .expect("seasonal array must be contiguous"); // &[f64]
-    
+
     println!("---");
     println!("Seasonal: {:?}", seasonal);
 
@@ -131,4 +141,14 @@ fn main() -> PolarsResult<()> {
     println!("Its SD (computed by the library): {:?}", std_seasonal);
     
     Ok(())
+}
+
+fn result_std(ref_opt_data: &Option<&[f64]>) -> Result<StandardDeviationOutput<f64>, String>
+{
+    let std_full = match *ref_opt_data {
+        Some(ref_data) => Ok(standard_deviation(ref_data)),
+        None => Err(String::from("Expected contiguous data")),
+    };
+    return std_full
+
 }
