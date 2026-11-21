@@ -12,7 +12,10 @@ use plotlars::{Axis, Legend, Line, Plot, Rgb, Shape, Text, TimeSeriesPlot};
 
 // for STL decomposition
 use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
-// use scirs2_core::ndarray::array; // declared as `scirs2-core`
+// -> seasonal decomposition
+use scirs2_series::decomposition::seasonal::{decompose_seasonal, DecompositionModel};
+// -> Error: enum 'DecompositionModel' is private
+
 use scirs2_core::ndarray::Array1;
 
 // for numeric output: SD
@@ -124,11 +127,16 @@ fn main() -> PolarsResult<()> {
     println!("SD: {}", std_full.standard_deviation); // 22.4
 
     // STL decomposition
+    /*
     let options = STLOptions::default(); // STLOptions
     let result = stl_decomposition(&array_py, 12, &options)
         .expect("should succeed"); // DecompositionResult<f64>
     // result.seasonal : ArrayBase<_,Dim<[usize;1]>, f64>
-
+    */
+    // ->
+    let result = decompose_seasonal(&array_py, 12, DecompositionModel::Additive)
+        .expect("decomposition should succeed");
+    
     let seasonal = result.seasonal.as_slice()// Option<&[f64]>
         .expect("seasonal array must be contiguous"); // &[f64]
 
