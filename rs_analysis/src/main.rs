@@ -6,21 +6,19 @@ use plotlars::polars::prelude::*;
 
 // see: https://docs.rs/plotlars/latest/plotlars/struct.TimeSeriesPlot.html
 use plotlars::{Axis, Legend, Line, Plot, Rgb, Shape, Text, TimeSeriesPlot};
-//  These imports were unresolved before backend was added to Cargo.toml
+//  These imports were unresolved before backend was added to Cargo.toml, but used here.
 //  plotlars::Plot
 //  plotlars::TimeSeriesPlot
 
 // for STL decomposition
 use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
 // -> seasonal decomposition
-use scirs2_series::decomposition::seasonal::{decompose_seasonal, DecompositionModel};
-// -> Error: enum 'DecompositionModel' is private
+use scirs2_series::decomposition::{decompose_seasonal, DecompositionModel};
 
 use scirs2_core::ndarray::Array1;
 
 // for numeric output: SD
 use std_dev::{standard_deviation, StandardDeviationOutput};
-// use log::error;
 
 fn main() -> PolarsResult<()> {
     // println!("Hello from polars-rs!");
@@ -88,16 +86,6 @@ fn main() -> PolarsResult<()> {
         .build()
         .plot();
     
-    // Next step: STL decomposition of the col "Python". See:
-    // https://docs.rs/scirs2-series/latest/scirs2_series/
-    // https://stackoverflow.com/a/74332649
-    /*
-    let array_py = df_time_py.select(["Python"])?
-        .to_ndarray::<Float64Type>().unwrap();
-    */
-    // ->
-    // No method named `to_ndarray` found for struct `DataFrame`
-    
     // Approach suggested by Gemini
     // 1. Cast the "Python" column from i64 to f64
     let py_series = df_time_py
@@ -148,9 +136,9 @@ fn main() -> PolarsResult<()> {
 
     println!("---");
     println!("Its SD (computed by the library): {:?}", std_seasonal);
-    println!("SD: {}", std_seasonal.standard_deviation); // 6.05
+    println!("SD: {}", std_seasonal.standard_deviation); // 4.6
     println!("Ratio: {}", std_seasonal.standard_deviation / std_full.standard_deviation);
-    // 0.2697
+    // 0.206
     
     Ok(())
 }

@@ -6,11 +6,9 @@ edition = "2024"
 [dependencies]
 # polars = { version = "0.55.2", features = ["csv", "lazy", "dtype-date", "strings"] }
 plotlars = { version = "0.12.6", features = ["plotters"] }
-# ndarray : attempt to convert to a type used in TLS decomposition
 
 # For Time-Series Decomposition
 scirs2-series = "0.6.5"
 scirs2-core = "0.6.5"
 std-dev = "0.1.0"
 
-# log = "0.4.35"
