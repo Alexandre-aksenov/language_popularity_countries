@@ -11,7 +11,7 @@ use plotlars::{Axis, Legend, Line, Plot, Rgb, Shape, Text, TimeSeriesPlot};
 //  plotlars::TimeSeriesPlot
 
 // for STL decomposition
-use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
+// use scirs2_series::decomposition::stl::{stl_decomposition, STLOptions};
 // -> seasonal decomposition
 use scirs2_series::decomposition::{decompose_seasonal, DecompositionModel};
 
@@ -21,56 +21,7 @@ use scirs2_core::ndarray::Array1;
 use std_dev::{standard_deviation, StandardDeviationOutput};
 
 fn main() -> PolarsResult<()> {
-    // println!("Hello from polars-rs!");
-
-    // Path relative to the Cargo.toml / workspace root directory
-    let file_path = "../dat/FR_2010_2025.csv"; // &str
-
-    // Read the CSV file into a Polars DataFrame
-    let df = CsvReadOptions::default()
-        .with_has_header(true) // CsvReadOptions
-        .try_into_reader_with_file_path(Some(file_path.into()))? // CsvReader<File>
-        .finish()?; // DataFrame
-
-    // Extract the column for "Python",
-    // see: https://docs.rs/polars/latest/polars/prelude/struct.DataFrame.html#method.column
-    // let col_py = df.column("Python")?;
-
-    // Print the column to the screen
-    // println!("{:?}", df);
-
-    // println!("Column for Python:");
-    // println!("{:?}", col_py);
-    
-    // Extract a new DF
-    // let df_py = df.select(["Python"])?;
-
-    // Print the DataFrame to the screen
-    // println!("DataFrame for Python:");
-    // println!("{:?}", df_py);
-    // -> shape: (194, 1) , one column "Python" of dtype : i64
-
-    // Extract the column with indices
-    let df_time_py = df.select(["Time", "Python"])?;
-
-    // Print the DataFrame to the screen
-    println!("DataFrame for Python with timestamps:");
-    println!("{:?}", df_time_py);
-    // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : str, i64
-    
-    // Convert the type of column "Time" from "str" to Chrono.
-    // Suggested by Gemini
-    let df_time_py = df_time_py
-        .lazy()
-        .with_columns([
-            col("Time")
-                .str()
-                .to_date(StrptimeOptions { // https://docs.rs/crate/polars-plan/0.55.2#method.to_date
-                    format: Some("%Y-%m-%d".into()),
-                    ..Default::default()
-                })
-        ])// LazyFrame
-        .collect()?;
+    let df_time_py = extract_data_fr()?;
     
     // Print the DataFrame to the screen
     println!("DataFrame for Python with dates:");
@@ -142,6 +93,43 @@ fn main() -> PolarsResult<()> {
     
     Ok(())
 }
+
+// Data extraction from files.
+
+/// Extracts historical data for France.
+/// DF with 2 columns: 'Time' (date), 'Python' (i64) , 1 row per month.
+fn extract_data_fr() -> PolarsResult<DataFrame>
+{
+    // Path relative to the Cargo.toml / workspace root directory
+    let file_path = "../dat/FR_2010_2025.csv"; // &str
+
+    // Read the CSV file into a Polars DataFrame
+    let df = CsvReadOptions::default()
+        .with_has_header(true) // CsvReadOptions
+        .try_into_reader_with_file_path(Some(file_path.into()))? // CsvReader<File>
+        .finish()?; // DataFrame
+
+    // Extract the column with indices
+    let df_time_py = df.select(["Time", "Python"])?;
+
+    // Convert the type of column "Time" from "str" to Chrono.
+    // Suggested by Gemini
+    let df_time_py = df_time_py
+        .lazy()
+        .with_columns([
+            col("Time")
+                .str()
+                .to_date(StrptimeOptions { // https://docs.rs/crate/polars-plan/0.55.2#method.to_date
+                    format: Some("%Y-%m-%d".into()),
+                    ..Default::default()
+                })
+        ])// LazyFrame
+        .collect()?;
+    
+    Ok(df_time_py)
+}
+
+// A fn for Data analysis. The rest will join.
 
 fn result_std(ref_opt_data: &Option<&[f64]>) -> Result<StandardDeviationOutput<f64>, String>
 {
