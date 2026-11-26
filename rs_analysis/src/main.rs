@@ -27,55 +27,33 @@ fn main() -> PolarsResult<()> {
     println!("DataFrame for Python with dates:");
     println!("{:?}", df_time_py);
     // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : date, i64
-
-    // Plot the data.
-    plot_historical(&df_time_py).plot();
+    plot_historical(&df_time_py).plot(); // Plot the data.
     
     // Cast the "Python" column from column of i64 to Array1 of f64
     let array_py = cast_py_double_array(&df_time_py)?;
-    
-    // Check the extracted data array
-    println!("Data as an array: {:?}", array_py);
+    println!("Data as an array: {:?}", array_py); // Check the extracted data array
 
     // Compute mean && SD of the original data.
     let ref_array_as_slice = &array_py.as_slice();
     // borrowing is used here to ensure 'array_py' can be reused later.
 
     let std_full = result_std(ref_array_as_slice)
-        .expect("Expected a contiguous array");
+        .expect("Expected a contiguous array"); // mean: 42.9
     println!("---");
-    println!("SD (computed by the library) of full data: {:?}", std_full);
     println!("SD: {}", std_full.standard_deviation); // 22.4
-
-    // STL decomposition
-    /*
-    let options = STLOptions::default(); // STLOptions
-    let result = stl_decomposition(&array_py, 12, &options)
-        .expect("should succeed"); // DecompositionResult<f64>
-    // result.seasonal : ArrayBase<_,Dim<[usize;1]>, f64>
-    */
-    // ->
+    
+    // Seasonal decomposition
     let result = decompose_seasonal(&array_py, 12, DecompositionModel::Additive)
         .expect("decomposition should succeed");
     
-    let seasonal = result.seasonal.as_slice()// Option<&[f64]>
-        .expect("seasonal array must be contiguous"); // &[f64]
-
-    println!("---");
-    println!("Seasonal: {:?}", seasonal);
-
-    let std_seasonal = standard_deviation(seasonal);
-    // StandardDeviationOutput<f64>
-    
-    // -> Compute reusing the fn. 'result.seasonal' remains available!
+    // -> SD of the seasonal component reusing the fn.
     let std_seasonal2 = result_std(&result.seasonal.as_slice())
         .expect("Expected a contiguous array");
+        // StandardDeviationOutput<f64>
 
     println!("---");
-    println!("Its SD (computed by the library): {:?}", std_seasonal);
-    println!("SD: {}", std_seasonal.standard_deviation); // 4.6
-    println!("SD 2: {}", std_seasonal2.standard_deviation); // same
-    println!("Ratio: {}", std_seasonal.standard_deviation / std_full.standard_deviation);
+    println!("SD of the seasonal part: {}", std_seasonal2.standard_deviation); // 4.6
+    println!("Ratio: {}", std_seasonal2.standard_deviation / std_full.standard_deviation);
     // 0.206
     
     Ok(())
