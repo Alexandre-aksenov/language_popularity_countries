@@ -29,13 +29,7 @@ fn main() -> PolarsResult<()> {
     // -> shape: (194, 2) , 2 columns "Time", "Python" of dtypes : date, i64
 
     // Plot the data.
-    // This minimal plot can be made "prettier" by adding ticks and vertical lines at September
-    TimeSeriesPlot::builder()
-        .data(&df_time_py) 
-        .x("Time")
-        .y("Python")
-        .build()
-        .plot();
+    plot_historical(&df_time_py).plot();
     
     // Approach suggested by Gemini
     // 1. Cast the "Python" column from i64 to f64
@@ -127,6 +121,22 @@ fn extract_data_fr() -> PolarsResult<DataFrame>
         .collect()?;
     
     Ok(df_time_py)
+}
+
+/// Plot the data.
+/// This minimal plot can be made "prettier" 
+/// by adding ticks and vertical lines at September.
+/// Input: DF with 2 columns
+///     "Time" (independent)
+///     "Python" (dependent)
+/// Output: TimeSeriesPlot instance.
+fn plot_historical(df_time_py: &DataFrame) -> TimeSeriesPlot {
+    TimeSeriesPlot::builder()
+        .data(&df_time_py)
+        .x("Time")
+        .y("Python")
+        .build()
+        // .plot()
 }
 
 // A fn for Data analysis. The rest will join.
