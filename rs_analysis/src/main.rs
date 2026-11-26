@@ -132,12 +132,40 @@ fn cast_py_double_array(df_time_py: &DataFrame) -> PolarsResult<Array1<f64>>
     Ok(array_py)
 }
 
+/// Input: data (&Option<&[f64]>).
+///   The first reference is for explicitly borrowing data,
+///   Option id for a noncontiguous Array upstream may lead to None ,
+///   the 2nd reference is for passing the expected input type to the fn 
+///   'standard_deviation' .
+/// Output: Result<StandardDeviationOutput>
+// fn result_std(ref_opt_data: &Option<&[f64]>) -> Result<StandardDeviationOutput<f64>, String>
+/*
 fn result_std(ref_opt_data: &Option<&[f64]>) -> Result<StandardDeviationOutput<f64>, String>
 {
     let std_full = match *ref_opt_data {
         Some(ref_data) => Ok(standard_deviation(ref_data)),
         None => Err(String::from("Expected contiguous data")),
     };
-    return std_full
-
+    // return std_full
+    std_full
 }
+*/
+// ->
+fn result_std(ref_opt_data: &Option<&[f64]>) -> PolarsResult<StandardDeviationOutput<f64>>
+{
+    /*
+    let std_full = match *ref_opt_data {
+        Some(ref_data) => Ok(standard_deviation(ref_data)),
+        None => Err(String::from("Expected contiguous data")),
+    };
+    */
+    // ->
+    let std_full = standard_deviation((*ref_opt_data)
+        .expect("Expected contiguous data"));
+
+    Ok(std_full)
+}
+
+
+
+// fn result_just_std(ref_opt_data: &Option<&[f64]>) -> 
