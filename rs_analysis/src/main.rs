@@ -31,20 +31,8 @@ fn main() -> PolarsResult<()> {
     // Plot the data.
     plot_historical(&df_time_py).plot();
     
-    // Approach suggested by Gemini
-    // 1. Cast the "Python" column from i64 to f64
-    let py_series = df_time_py
-        .column("Python")?
-        .cast(&DataType::Float64)?;
-
-    // 2. Collect into a Vec<f64> (handling potential nulls if any exist)
-    let py_vec: Vec<f64> = py_series
-        .f64()?
-        .into_no_null_iter()
-        .collect();
-
-    // 3. Convert to scirs2_core's Array1<f64>
-    let array_py: Array1<f64> = Array1::from_vec(py_vec);
+    // Cast the "Python" column from column of i64 to Array1 of f64
+    let array_py = cast_py_double_array(&df_time_py)?;
     
     // Check the extracted data array
     println!("Data as an array: {:?}", array_py);
@@ -139,7 +127,27 @@ fn plot_historical(df_time_py: &DataFrame) -> TimeSeriesPlot {
         // .plot()
 }
 
-// A fn for Data analysis. The rest will join.
+// fns for Data analysis. The rest will join.
+
+/// Cast the "Python" column from i64 to Array1 of f64
+fn cast_py_double_array(df_time_py: &DataFrame) -> PolarsResult<Array1<f64>>
+{
+    // 1. Cast the "Python" column from i64 to f64
+    let py_series = df_time_py
+        .column("Python")?
+        .cast(&DataType::Float64)?;
+
+    // 2. Collect into a Vec<f64> (handling potential nulls if any exist)
+    let py_vec: Vec<f64> = py_series
+        .f64()?
+        .into_no_null_iter()
+        .collect();
+
+    // 3. Convert to scirs2_core's Array1<f64>
+    let array_py: Array1<f64> = Array1::from_vec(py_vec);
+    
+    Ok(array_py)
+}
 
 fn result_std(ref_opt_data: &Option<&[f64]>) -> Result<StandardDeviationOutput<f64>, String>
 {
