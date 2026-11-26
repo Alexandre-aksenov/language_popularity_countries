@@ -35,25 +35,36 @@ fn main() -> PolarsResult<()> {
 
     // Compute mean && SD of the original data.
     let ref_array_as_slice = &array_py.as_slice();
-    // borrowing is used here to ensure 'array_py' can be reused later.
-
+    // borrowing is used here to ensure 'array_py' can be reused later. mean: 42.9
+    
+    /*
     let std_full = result_std(ref_array_as_slice)
-        .expect("Expected a contiguous array"); // mean: 42.9
+        .expect("Expected a contiguous array"); // 
     println!("---");
     println!("SD: {}", std_full.standard_deviation); // 22.4
+    */
+    // ->
+    let std_full = result_just_std(ref_array_as_slice)?;
+    println!("SD: {}", std_full); // 22.4
     
     // Seasonal decomposition
     let result = decompose_seasonal(&array_py, 12, DecompositionModel::Additive)
         .expect("decomposition should succeed");
     
     // -> SD of the seasonal component reusing the fn.
+    /*
     let std_seasonal2 = result_std(&result.seasonal.as_slice())
         .expect("Expected a contiguous array");
         // StandardDeviationOutput<f64>
 
     println!("---");
     println!("SD of the seasonal part: {}", std_seasonal2.standard_deviation); // 4.6
-    println!("Ratio: {}", std_seasonal2.standard_deviation / std_full.standard_deviation);
+    */
+    // ->
+    let std_seasonal2 = result_just_std(&result.seasonal.as_slice())?;
+    println!("SD of the seasonal part: {}", std_seasonal2); // 4.6
+    
+    println!("Ratio: {}", std_seasonal2 / std_full);
     // 0.206
     
     Ok(())
@@ -166,6 +177,11 @@ fn result_std(ref_opt_data: &Option<&[f64]>) -> PolarsResult<StandardDeviationOu
     Ok(std_full)
 }
 
+fn result_just_std(ref_opt_data: &Option<&[f64]>) -> PolarsResult<f64>
+{
+    let std_full = result_std(ref_opt_data)
+        .expect("Expected a contiguous array"); // mean: 42.9
 
-
-// fn result_just_std(ref_opt_data: &Option<&[f64]>) -> 
+    // println!("SD: {}", std_full.standard_deviation);
+    Ok(std_full.standard_deviation)
+}
