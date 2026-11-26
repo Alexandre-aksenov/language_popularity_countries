@@ -66,10 +66,15 @@ fn main() -> PolarsResult<()> {
 
     let std_seasonal = standard_deviation(seasonal);
     // StandardDeviationOutput<f64>
+    
+    // -> Compute reusing the fn. 'result.seasonal' remains available!
+    let std_seasonal2 = result_std(&result.seasonal.as_slice())
+        .expect("Expected a contiguous array");
 
     println!("---");
     println!("Its SD (computed by the library): {:?}", std_seasonal);
     println!("SD: {}", std_seasonal.standard_deviation); // 4.6
+    println!("SD 2: {}", std_seasonal2.standard_deviation); // same
     println!("Ratio: {}", std_seasonal.standard_deviation / std_full.standard_deviation);
     // 0.206
     
